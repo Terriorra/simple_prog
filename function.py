@@ -142,7 +142,65 @@ x_array.
 
     return Quest(text, ans)
 
+# Тип 5.1
+# У исполнителя Вычислитель две команды, которым присвоены номера:
 #
-# a = create_type_6()
-# print(a)
-# print(a.ans)
+# 1. умножь на 4
+# 2. вычти b
+#
+# (b — неизвестное натуральное число)
+#
+# Первая из них увеличивает число на экране в 4 раза, вторая уменьшает его на b.
+# Известно, что программа 12212 переводит число 3 в число 21.
+#
+# Определите значение b.
+
+
+def create_command(a, b):
+    actions = sample([('прибавь', '+'), ('раздели на', '/'), ('вычти', '-'), ('умножь на', '*')], 2)
+    a, b = sample([a, b], 2)
+
+    exp_1 = f'{actions[0][0]} {a}', f'{actions[0][1]} {a}'
+    exp_2 = f'{actions[1][0]} b', f'{actions[1][1]} {b}'
+
+    return exp_1, exp_2, b
+
+
+def create_type_5_1():
+    text = '''У исполнителя Вычислитель две команды, которым присвоены номера:
+
+1. expression_1
+2. expression_2
+
+(b — неизвестное натуральное число)
+Известно, что программа prog переводит число num_1 в число num_2.
+
+Определите значение b.
+    '''
+    a = randint(2, 20)
+    b = randint(2, 20)
+    expressions = create_command(a, b)
+
+    num_1 = randint(2, 20)
+    num_2 = num_1
+    prog = [str(choice('12')) for _ in range(randint(5, 10))]
+
+    for i in prog:
+        match i:
+            case '1':
+                num_2 = eval(f'{num_2} {expressions[0][1]}')
+            case '2':
+                num_2 = eval(f'{num_2} {expressions[1][1]}')
+
+    text = text.replace('num_1', str(num_1))
+    text = text.replace('num_2', str(round(num_2, 2)))
+    text = text.replace('prog', ''.join(prog))
+    text = text.replace('expression_1', expressions[0][0])
+    text = text.replace('expression_2', expressions[1][0])
+
+    return Quest(text, expressions[2])
+
+
+a = create_type_5_1()
+print(a)
+print(a.ans)
