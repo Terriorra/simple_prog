@@ -32,7 +32,7 @@ with open(path, 'r', encoding='utf-8') as f:
 # Кубок победителя
 path = resource_path('cup')
 with open(path, 'r', encoding='utf-8') as f:
-    cup = f.read().split('\n')
+    cup = f.read()
 
 # Описание задания и решение
 path = resource_path('about')
@@ -186,7 +186,7 @@ x_array.
 
     ans = dict_ans[0] if answer == 'YES' else dict_ans[1]
 
-    return Quest(text, ans)
+    return Quest(text, [str(ans)])
 
 # Тип 5.1
 # У исполнителя Вычислитель две команды, которым присвоены номера:
@@ -244,7 +244,7 @@ def create_type_5_1():
     text = text.replace('expression_1', expressions[0][0])
     text = text.replace('expression_2', expressions[1][0])
 
-    return Quest(text, expressions[2])
+    return Quest(text, [str(expressions[2])])
 
 
 # Тип 5.2
@@ -280,13 +280,60 @@ def create_type_5_2():
             case '2':
                 num_2 = eval(f'{num_2} {expressions[1][1]}')
 
+    ans = [''.join(prog)]
+    for i1 in '12':
+        for i2 in '12':
+            for i3 in '12':
+                for i4 in '12':
+                    for i5 in '12':
+                        x = num_1
+                        if i1 == '1':
+                            x = eval(f'{x} {expressions[0][1]}')
+                        else:
+                            x = eval(f'{x} {expressions[1][1]}')
+                        if str(round(x, 2)) == num_2:
+                            ans.append(i1)
+                            break
+
+                        if i2 == '1':
+                            x = eval(f'{x} {expressions[0][1]}')
+                        else:
+                            x = eval(f'{x} {expressions[1][1]}')
+                        if str(round(x, 2)) == num_2:
+                            ans.append(i1+i2)
+                            break
+
+                        if i3 == '1':
+                            x = eval(f'{x} {expressions[0][1]}')
+                        else:
+                            x = eval(f'{x} {expressions[1][1]}')
+                        if str(round(x, 2)) == num_2:
+                            ans.append(i1 + i2 + i3)
+                            break
+
+                        if i4 == '1':
+                            x = eval(f'{x} {expressions[0][1]}')
+                        else:
+                            x = eval(f'{x} {expressions[1][1]}')
+                        if str(round(x, 2)) == num_2:
+                            ans.append(i1 + i2 + i3 + i4)
+                            break
+
+                        if i5 == '1':
+                            x = eval(f'{x} {expressions[0][1]}')
+                        else:
+                            x = eval(f'{x} {expressions[1][1]}')
+                        if str(round(x, 2)) == num_2:
+                            ans.append(i1 + i2 + i3 + i4 + i5)
+                            break
+
     text = text.replace('num_1', str(num_1))
     text = text.replace('num_2', str(round(num_2, 2)))
     text = text.replace('prog', ''.join(prog))
     text = text.replace('expression_1', expressions[0][0])
     text = text.replace('expression_2', expressions[1][0].replace('b', str(expressions[2])))
 
-    return Quest(text, ''.join(prog))
+    return Quest(text, ans)
 
 
 ###################################
@@ -312,6 +359,8 @@ def create_var(var, n, right, grade):
             q = create_type_6()
         case 2:
             q = create_type_5_1()
+            while str(q.ans) == '0.0':
+                q = create_type_5_1()
         case 3:
             q = create_type_5_2()
 
