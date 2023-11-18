@@ -13,7 +13,6 @@ from random import sample
 # Функция для загрузки и константы
 ###################################
 
-
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -35,6 +34,11 @@ path = resource_path('cup')
 with open(path, 'r', encoding='utf-8') as f:
     cup = f.read().split('\n')
 
+# Описание задания и решение
+path = resource_path('about')
+with open(path, 'r', encoding='utf-8') as f:
+    about = f.read().split('\n\n\n')
+
 
 class Quest:
     """
@@ -47,6 +51,48 @@ class Quest:
 
     def __str__(self):
         return self.text
+
+###################################
+# Функции для вывода текста
+###################################
+
+
+sign_hor = '═'
+sign_vert = '║'
+LINE_LEN = 70
+
+
+def print_text(text, len_string):
+    s = [f" {(len_string - 2) * sign_hor} "]
+
+    for line in text:
+        if len(line) + 4 < len_string:
+            s.append(f"{sign_vert} {line}{(len_string - len(line) - 4) * ' '} {sign_vert}")
+        else:
+            s += cut_string(line, len_string)
+    s.append(f" {(len_string - 2) * sign_hor} ")
+
+    return s
+
+
+def cut_string(text, len_string):
+    s = []
+
+    text = text.split(' ')
+    lines = []
+    now = ''
+    for i in text:
+        if len(now + ' ' + i) < len_string - 4:
+            now += ' ' + i
+        else:
+            lines.append(now)
+            now = i
+    lines.append(now)
+
+    for line in lines:
+        s.append(f"{sign_vert} {line}{(len_string - 4 - len(line)) * ' '} {sign_vert}")
+
+    return s
 
 
 ###################################
@@ -241,3 +287,45 @@ def create_type_5_2():
     text = text.replace('expression_2', expressions[1][0].replace('b', str(expressions[2])))
 
     return Quest(text, ''.join(prog))
+
+
+###################################
+# Генерация вопроса
+###################################
+
+def create_var(var, n, right, grade):
+    os.system("CLS")
+
+    text = f'''Текущий раздел: {var} из 3
+Осталось решить: {n-right} из {n}
+Текущая оценка: {grade}'''
+
+    text = print_text(text.split('\n'), LINE_LEN)
+
+    ans = ''
+    q = Quest(text, ans)
+
+    match var:
+        case 1:
+            text += ''
+            q = create_type_6()
+        case 2:
+            text += ''
+            q = create_type_5_1()
+        case 3:
+            text += ''
+            q = create_type_5_2()
+
+    text += print_text(q.text.split('\n'), LINE_LEN)
+
+    q.text = '\n'.join(text)
+
+    return q
+
+
+var = 1
+
+a = create_var(var, 10, 1, 2)
+
+print(a)
+print(a.ans)
