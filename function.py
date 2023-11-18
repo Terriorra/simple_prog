@@ -302,18 +302,17 @@ def create_var(var, n, right, grade):
 
     text = print_text(text.split('\n'), LINE_LEN)
 
+    text += print_text(about[0].split('\n'), LINE_LEN)
+
     ans = ''
     q = Quest(text, ans)
 
     match var:
         case 1:
-            text += print_text(about[0].split('\n'), LINE_LEN)
             q = create_type_6()
         case 2:
-            text += ''
             q = create_type_5_1()
         case 3:
-            text += ''
             q = create_type_5_2()
 
     text += print_text(q.text.split('\n'), LINE_LEN)
@@ -321,11 +320,3 @@ def create_var(var, n, right, grade):
     q.text = '\n'.join(text)
 
     return q
-
-
-var = 1
-
-a = create_var(var, 10, 1, 2)
-
-print(a)
-print(a.ans)
