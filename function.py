@@ -76,14 +76,14 @@ def create_expression():
     sign = ['<', '>', '<=', '>=', '==']
     operator = ['and', 'or']
     match_operator = ['+', '-', '*', '/', '//', '%']
-    not_oper = ['', 'not ']
+    not_operator = ['', 'not ']
     var = sample(['s', 't'], 2)
 
     match choice(range(1, 4)):
         case 1:
             # s < 5 or k < 5
-            expression = (f'{choice(not_oper)}({var[0]} {choice(sign)} {randint(3, 15)}) '
-                          f'{choice(operator)} {choice(not_oper)}({var[1]} {choice(sign)} {randint(3, 15)})')
+            expression = (f'{choice(not_operator)}({var[0]} {choice(sign)} {randint(3, 15)}) '
+                          f'{choice(operator)} {choice(not_operator)}({var[1]} {choice(sign)} {randint(3, 15)})')
         case 2:
             # s >= 2 * k
             expression = f'{var[0]} {choice(sign)} {randint(3, 15)} {choice(match_operator)} {var[1]}'
@@ -201,6 +201,43 @@ def create_type_5_1():
     return Quest(text, expressions[2])
 
 
-a = create_type_5_1()
-print(a)
-print(a.ans)
+# Тип 5.2
+# У исполнителя Делитель две команды, которым присвоены номера:
+#
+# 1. раздели на 2
+# 2. вычти 1
+#
+# Первая из них уменьшает число на экране в 2 раза, вторая уменьшает его на 1.
+# Исполнитель работает только с натуральными числами. Составьте алгоритм получения из числа 65 числа 4,
+# содержащий не более 5 команд. В ответе запишите только номера команд.
+
+def create_type_5_2():
+    text = '''У исполнителя Вычислитель две команды, которым присвоены номера:
+
+    1. expression_1
+    2. expression_2
+
+    Составьте алгоритм получения из числа num_1 числа num_2, содержащий не более 5 команд.
+        '''
+    a = randint(2, 20)
+    b = randint(2, 20)
+    expressions = create_command(a, b)
+
+    num_1 = randint(2, 20)
+    num_2 = num_1
+    prog = [str(choice('12')) for _ in range(randint(3, 5))]
+
+    for i in prog:
+        match i:
+            case '1':
+                num_2 = eval(f'{num_2} {expressions[0][1]}')
+            case '2':
+                num_2 = eval(f'{num_2} {expressions[1][1]}')
+
+    text = text.replace('num_1', str(num_1))
+    text = text.replace('num_2', str(round(num_2, 2)))
+    text = text.replace('prog', ''.join(prog))
+    text = text.replace('expression_1', expressions[0][0])
+    text = text.replace('expression_2', expressions[1][0].replace('b', str(expressions[2])))
+
+    return Quest(text, ''.join(prog))
