@@ -307,7 +307,7 @@ def create_var(var, n, right, grade):
 
     match var:
         case 1:
-            text += ''
+            text += print_text(about[0].split('\n'), LINE_LEN)
             q = create_type_6()
         case 2:
             text += ''
