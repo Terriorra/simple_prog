@@ -8,6 +8,8 @@ from random import randint
 from random import choice
 from random import sample
 
+from itertools import product
+
 
 ###################################
 # Функция для загрузки и константы
@@ -51,6 +53,7 @@ class Quest:
 
     def __str__(self):
         return self.text
+
 
 ###################################
 # Функции для вывода текста
@@ -188,6 +191,7 @@ x_array.
 
     return Quest(text, [str(ans)])
 
+
 # Тип 5.1
 # У исполнителя Вычислитель две команды, которым присвоены номера:
 #
@@ -257,6 +261,25 @@ def create_type_5_1():
 # Исполнитель работает только с натуральными числами. Составьте алгоритм получения из числа 65 числа 4,
 # содержащий не более 5 команд. В ответе запишите только номера команд.
 
+# Создам список из все возможных и подходящих команд
+prog_all = []
+for n_now in range(2, 6):
+    for i_now in product('12', repeat=n_now):
+        s_now = ''.join(i_now)
+        if len(set(s_now)) > 1:
+            prog_all.append(s_now)
+
+
+def prog_count(x, prog, expressions):
+    for i in prog:
+        match i:
+            case '1':
+                x = eval(f'{x} {expressions[0][1]}')
+            case '2':
+                x = eval(f'{x} {expressions[1][1]}')
+    return str(round(x, 2))
+
+
 def create_type_5_2():
     text = '''У исполнителя Вычислитель две команды, которым присвоены номера:
 
@@ -265,70 +288,31 @@ def create_type_5_2():
 
     Составьте алгоритм получения из числа num_1 числа num_2, содержащий не более 5 команд.
         '''
+    # Константа для первой команды
     a = randint(2, 20)
+    # Константа для второй команды
     b = randint(2, 20)
+    # Создадим две команды
     expressions = create_command(a, b)
 
+    # Старт
     num_1 = randint(2, 20)
-    num_2 = num_1
-    prog = [str(choice('12')) for _ in range(randint(3, 5))]
 
-    for i in prog:
-        match i:
-            case '1':
-                num_2 = eval(f'{num_2} {expressions[0][1]}')
-            case '2':
-                num_2 = eval(f'{num_2} {expressions[1][1]}')
+    # Выберем набор команд
+    prog = choice(prog_all)
 
-    ans = [''.join(prog)]
-    for i1 in '12':
-        for i2 in '12':
-            for i3 in '12':
-                for i4 in '12':
-                    for i5 in '12':
-                        x = num_1
-                        if i1 == '1':
-                            x = eval(f'{x} {expressions[0][1]}')
-                        else:
-                            x = eval(f'{x} {expressions[1][1]}')
-                        if str(round(x, 2)) == num_2:
-                            ans.append(i1)
-                            break
+    num_2 = prog_count(num_1, prog, expressions)
 
-                        if i2 == '1':
-                            x = eval(f'{x} {expressions[0][1]}')
-                        else:
-                            x = eval(f'{x} {expressions[1][1]}')
-                        if str(round(x, 2)) == num_2:
-                            ans.append(i1+i2)
-                            break
+    ans = [prog]
 
-                        if i3 == '1':
-                            x = eval(f'{x} {expressions[0][1]}')
-                        else:
-                            x = eval(f'{x} {expressions[1][1]}')
-                        if str(round(x, 2)) == num_2:
-                            ans.append(i1 + i2 + i3)
-                            break
+    for i in prog_all:
+        if prog_count(num_1, i, expressions) == num_2:
+            ans.append(i)
 
-                        if i4 == '1':
-                            x = eval(f'{x} {expressions[0][1]}')
-                        else:
-                            x = eval(f'{x} {expressions[1][1]}')
-                        if str(round(x, 2)) == num_2:
-                            ans.append(i1 + i2 + i3 + i4)
-                            break
-
-                        if i5 == '1':
-                            x = eval(f'{x} {expressions[0][1]}')
-                        else:
-                            x = eval(f'{x} {expressions[1][1]}')
-                        if str(round(x, 2)) == num_2:
-                            ans.append(i1 + i2 + i3 + i4 + i5)
-                            break
+    ans = list(set(ans))
 
     text = text.replace('num_1', str(num_1))
-    text = text.replace('num_2', str(round(num_2, 2)))
+    text = text.replace('num_2', num_2)
     text = text.replace('prog', ''.join(prog))
     text = text.replace('expression_1', expressions[0][0])
     text = text.replace('expression_2', expressions[1][0].replace('b', str(expressions[2])))
@@ -344,7 +328,7 @@ def create_var(var, n, right, grade):
     os.system("CLS")
 
     text = f'''Текущий раздел: {var} из 3
-Осталось решить: {n-right} из {n}
+Осталось решить: {n - right} из {n}
 Текущая оценка: {grade}'''
 
     text = print_text(text.split('\n'), LINE_LEN)
