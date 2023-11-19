@@ -340,12 +340,15 @@ def create_var(var, n, right, grade):
 
     match var:
         case 1:
+            text += print_text(about[1].split('\n'), LINE_LEN)
             q = create_type_6()
         case 2:
+            text += print_text(about[2].split('\n'), LINE_LEN)
             q = create_type_5_1()
             while str(q.ans) == '0.0':
                 q = create_type_5_1()
         case 3:
+            text += print_text(about[3].split('\n'), LINE_LEN)
             q = create_type_5_2()
 
     text += print_text(q.text.split('\n'), LINE_LEN)
